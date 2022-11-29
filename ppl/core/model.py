@@ -32,9 +32,7 @@ class AbstractModel:
 
         return msg
 
-    def rv(self, name: str, dist: Distribution, **kwargs):
-        obs = kwargs.pop("obs", None)
-
+    def rv(self, name: str, dist: Distribution, obs=None):
         if not self._stack:
             return dist.sample()
 
