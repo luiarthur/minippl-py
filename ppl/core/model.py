@@ -16,6 +16,8 @@ class AbstractModel:
         return self.model(**kwargs)
 
     def stack(self):
+        # This is needed to avoid a handler pushing itself onto a stack, with a
+        # stack field, causing recursive pushing issues. 
         return self._stack
 
     def apply_stack(self, msg: Message):
