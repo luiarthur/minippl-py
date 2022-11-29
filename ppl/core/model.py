@@ -1,9 +1,9 @@
 from copy import copy
 from .message import Message
-from .handlers import Handler
+from .handlers import Handler, trace, condition
 import numpy as np
 from ppl.distributions import Distribution
-from typing import List
+from typing import List, Dict, Any
 
 class AbstractModel:
     def __init__(self):
@@ -36,13 +36,27 @@ class AbstractModel:
         if not self._stack:
             return dist.sample()
 
-        observed = not obs is None
         msg = Message(
             name = name,
             fn = dist,
             value = obs,
-            observed = observed
+            observed = (not obs is None)
         )
 
         msg = self.apply_stack(msg)
         return msg.value
+
+    def logpdf(self, state: Dict[str, Any], **kwargs):
+        t = trace(condition(self, state)).get(**kwargs)
+
+        lp = 0
+        for param in t.values():
+            if param.type == "rv":
+                lp += np.sum(param.fn.logpdf(param.value))
+
+                # Don't do the remaining computation if the log joint density
+                # is -inf.
+                if np.isneginf(lp):
+                    return np.NINF
+
+        return lp
