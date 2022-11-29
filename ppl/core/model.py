@@ -20,7 +20,7 @@ class AbstractModel:
         # stack field, causing recursive pushing issues. 
         return self._stack
 
-    def apply_stack(self, msg: Message):
+    def apply_stack(self, msg: Message) -> Message:
         for handler in reversed(self._stack):
             handler.process(msg)
 
@@ -43,13 +43,12 @@ class AbstractModel:
             observed = (not obs is None)
         )
 
-        msg = self.apply_stack(msg)
-        return msg.value
+        return self.apply_stack(msg).value
 
-    def logpdf(self, state: Dict[str, Any], **kwargs):
+    def logpdf(self, state: Dict[str, Any], **kwargs) -> float:
         t = trace(condition(self, state)).get(**kwargs)
 
-        lp = 0
+        lp = 0.0
         for param in t.values():
             if param.type == "rv":
                 lp += np.sum(param.fn.logpdf(param.value))
