@@ -7,9 +7,6 @@ class Distribution:
     def sample(self):
         pass
 
-    def run(self):
-        return self.sample()
-
 class Normal(Distribution):
     def __init__(self, loc=0, scale=1):
         self.loc = loc

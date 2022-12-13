@@ -11,7 +11,7 @@ _stack = []
 class Message:
     name: str
     value: Any
-    dist: Any = None
+    dist: Distribution
     observed: bool = False
 
 class Handler:
@@ -31,8 +31,8 @@ class Handler:
         return result
 
     def process(self, msg: Message):
-        # See apply_stack. This is invoked before the default effect.
         pass
+        # See apply_stack. This is invoked before the default effect.
 
     def postprocess(self, msg: Message):
         # See apply_stack. This is invoked after the default effect.
@@ -44,7 +44,7 @@ class trace(Handler):
         super().__init__(fn)
 
     def postprocess(self, msg: Message):
-        assert (msg.name not in self.result), "Sample sites must have unique names"
+        assert (msg.name not in self.result), "Sample sites must have unique names!"
         self.result[msg.name] = copy(msg)
 
     def get(self, **kwargs):
