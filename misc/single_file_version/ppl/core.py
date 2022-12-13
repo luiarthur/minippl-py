@@ -61,7 +61,7 @@ class condition(Handler):
             msg.value = self.substate[msg.name]
 
 def apply_stack(msg: Message) -> Message:
-    # Handlers recent on the handler stack are first applied.
+    # Handlers most recently added on the handler stack are first applied.
     for handler in reversed(_stack):
         handler.process(msg)
 
